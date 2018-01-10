@@ -1,7 +1,7 @@
 <template>
   <div class="appHeader tab-container">
-    <span class="tab left" :class="{ selected: this.selected.tab === 'metrics' }" @click="selectMetrics"><p>METRICS</p></span>
-    <span class="tab right" :class="{ selected: this.selected.tab === 'settings' }" @click="selectSettings"><p>SETTINGS</p></span>
+    <span class="tab left" :class="{ selected: selected.tab === 'Metrics' }" @click="selectMetrics"><p>METRICS</p></span>
+    <span class="tab right" :class="{ selected: selected.tab === 'Settings' }" @click="selectSettings"><p>SETTINGS</p></span>
   </div>
 </template>
 
@@ -9,7 +9,7 @@
 import router from '@/router'
 
 let selected = {
-  tab: 'metrics'
+  tab: 'Metrics'
 }
 
 export default {
@@ -19,13 +19,16 @@ export default {
       selected: selected
     }
   },
+  mounted: function () {
+    selected.tab = router.currentRoute.name
+  },
   methods: {
     selectMetrics: () => {
-      selected.tab = 'metrics'
+      selected.tab = 'Metrics'
       router.push({name: 'Metrics'})
     },
     selectSettings: () => {
-      selected.tab = 'settings'
+      selected.tab = 'Settings'
       router.push({name: 'Settings'})
     }
   }
