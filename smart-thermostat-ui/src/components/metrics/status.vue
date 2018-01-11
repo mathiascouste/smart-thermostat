@@ -2,16 +2,22 @@
   <div class="status">
     <div class="roundedArea">
       <div class="content">
-        <div class="temperature">23°C</div>
-        <div class="time">11:30</div>
+        <div class="temperature">{{currentTemperature}}°C</div>
+        <div class="time">{{currentTime}}</div>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import MetricsService from '@/services/metrics'
+
 export default {
-  name: 'status'
+  name: 'status',
+  subscriptions: {
+    currentTemperature: MetricsService.$currentTemperature,
+    currentTime: MetricsService.$currentTime
+  }
 }
 </script>
 
