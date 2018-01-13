@@ -2,7 +2,7 @@
   <div class="status">
     <div class="roundedArea">
       <div class="content">
-        <div class="temperature">{{currentTemperature}}°C</div>
+        <div class="temperature">{{currentTemperature | truncateTemperature}}°C</div>
         <div class="time">{{currentTime}}</div>
       </div>
     </div>
@@ -17,6 +17,11 @@ export default {
   subscriptions: {
     currentTemperature: MetricsService.$currentTemperature,
     currentTime: MetricsService.$currentTime
+  },
+  filters: {
+    truncateTemperature: (value) => {
+      return Math.trunc(value * 10) / 10
+    }
   }
 }
 </script>

@@ -1,6 +1,6 @@
 <template>
     <trend class="historic"
-    :data="[19, 19, 18, 17, 16, 16, 16, 16.5, 16.5, 16.5, 17, 20, 21, 21, 21, 20, 18, 17, 17, 17, 17]"
+    :data="recentHistoric"
     :gradient="['#16a085', '#2c3e50', '#e74c3c']"
     :height="180"
     :stroke-width="2"
@@ -10,8 +10,13 @@
 </template>
 
 <script>
+import MetricsService from '@/services/metrics'
+
 export default {
   name: 'historic',
+  subscriptions: {
+    recentHistoric: MetricsService.$recentHistoric
+  },
   components: {}
 }
 </script>

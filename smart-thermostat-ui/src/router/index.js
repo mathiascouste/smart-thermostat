@@ -16,6 +16,7 @@ export default new Router({
       beforeEnter: (to, from, next) => {
         MetricsService.retrieveCurrentTemperature()
         MetricsService.updateTime()
+        MetricsService.retrieveRecentHistoric()
         next()
       }
     },
