@@ -1,5 +1,5 @@
 <template>
-    <trend class="historic"
+    <trend v-if="recentHistoric" class="historic"
     :data="recentHistoric"
     :gradient="['#16a085', '#2c3e50', '#e74c3c']"
     :height="180"
