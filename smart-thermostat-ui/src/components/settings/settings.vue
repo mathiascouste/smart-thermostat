@@ -5,7 +5,7 @@
         {{ day.label }}
       </li>
     </ul>
-    <div class="daySettings">day settings</div>
+    <day-settings class="daySettings" :targets='targets'></day-settings>
     <div class="submission">
       <span class="button">
         <p>RESET</p>
@@ -18,10 +18,25 @@
 </template>
 
 <script>
+import DaySettings from './daySettings'
+
 export default {
-  name: 'HelloWorld',
+  name: 'Settings',
+  components: {
+    'day-settings': DaySettings
+  },
   data () {
     return {
+      targets: [
+        {
+          time: 0,
+          temperature: 16
+        },
+        {
+          time: 1440,
+          temperature: 16
+        }
+      ],
       days: [
         {
           label: 'MON',
