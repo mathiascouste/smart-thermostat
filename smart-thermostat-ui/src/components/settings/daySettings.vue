@@ -1,11 +1,18 @@
 <template>
   <div class="daySettings">
-    <svg height="100%" width="100%">
-      <line v-for="(line, index) in lines" :key="line.index" :x1="line.x1" :y1="line.y1" :x2="line.x2" :y2="line.y2" style="stroke:#2c3e50;stroke-width:2" @click='addTarget(index, $event)'/>
-      <circle v-for="(target, index) in targets" :key="target.time" :cx="target.time | timeToAbsix" :cy="target.temperature | temperatureToOrdonate" r="8" stroke="#2c3e50" stroke-width="2" fill="white" @click='showTarget(index)'/>
+    <svg height="100%" width="100%" v-if="this.targets">
+      <line v-for="(line) in lines" :key="'displayed-' + line.index" :x1="line.x1" :y1="line.y1" :x2="line.x2" :y2="line.y2" style="stroke:#2c3e50;stroke-width:2" />
+      <line class="hiddenWithEvent" v-for="(line, lineIndex) in lines" :key="line.index" :x1="line.x1" :y1="line.y1" :x2="line.x2" :y2="line.y2" style="stroke-width:16" @click='addTarget(lineIndex, $event)'/>
+
+      <circle v-for="(target) in targets" :key="'displayed-' + target.time" :cx="target.time | timeToAbsix" :cy="target.temperature | temperatureToOrdonate" r="8" stroke="#2c3e50" stroke-width="2" fill="white"/>
+      <circle class="hiddenWithEvent" v-for="(target, index) in targets" :key="target.time" :cx="target.time | timeToAbsix" :cy="target.temperature | temperatureToOrdonate" r="16" stroke="#2c3e50" stroke-width="2" fill="white" @click='showTarget(index)'/>
+
       <text x="0" y="15" fill="#2c3e50">{{temperatureMax}}°C</text>
       <text x="0" y="100%" fill="#2c3e50">{{temperatureMin}}°C</text>
     </svg>
+    <div height="100%" width="100%" v-if="!this.targets">
+      Select some day to see the days settings
+    </div>
     <div class="modal-mask" v-if="targetInUpdate">
       <div class="modal-wrapper">
         <div class="modal-container">
@@ -41,14 +48,16 @@
 </template>
 
 <script>
+import SettingsService from '@/services/settings'
+
 const temperatureMax = 25
 const temperatureMin = 15
 
 export default {
   name: 'day-settings',
-  props: [
-    'targets'
-  ],
+  subscriptions: {
+    targets: SettingsService.$targets
+  },
   data: function () {
     return {
       temperatureMax: temperatureMax,
@@ -99,8 +108,8 @@ export default {
       this.targetInUpdateIndex = null
     },
     deleteTarget: function () {
+      this.targets.splice(this.targetInUpdateIndex, 1)
       this.targetInUpdate = null
-      this.targets = this.targets.splice(this.targetInUpdateIndex, 1)
       this.targetInUpdateIndex = null
     }
   },
@@ -319,5 +328,10 @@ export default {
 input::-moz-focus-inner,
 input::-moz-focus-outer {
   border: 0;
+}
+
+.hiddenWithEvent {
+  visibility:hidden;
+  pointer-events: all;
 }
 </style>

@@ -5,12 +5,12 @@
         {{ day.label }}
       </li>
     </ul>
-    <day-settings class="daySettings" :targets='targets'></day-settings>
+    <day-settings class="daySettings"></day-settings>
     <div class="submission">
-      <span class="button">
+      <span class="button" @click="reset" v-bind:class="{ disabled: !targets }">
         <p>RESET</p>
       </span>
-      <span class="button principal">
+      <span class="button principal" @click="confirm" v-bind:class="{ disabled: !targets }">
         <p>CONFIRM</p>
       </span>
     </div>
@@ -18,25 +18,20 @@
 </template>
 
 <script>
+import SettingsService from '@/services/settings'
+
 import DaySettings from './daySettings'
 
 export default {
   name: 'Settings',
+  subscriptions: {
+    targets: SettingsService.$targets
+  },
   components: {
     'day-settings': DaySettings
   },
   data () {
     return {
-      targets: [
-        {
-          time: 0,
-          temperature: 16
-        },
-        {
-          time: 1440,
-          temperature: 16
-        }
-      ],
       days: [
         {
           label: 'MON',
@@ -47,7 +42,7 @@ export default {
           selected: false
         },
         {
-          label: 'WEB',
+          label: 'WED',
           selected: false
         },
         {
@@ -74,11 +69,11 @@ export default {
       let numberOfDaysAlreadySelected = this.calculateNumberOfDaysAlreadySelected()
       this.days[dayIndex].selected = !this.days[dayIndex].selected
       if (!numberOfDaysAlreadySelected) {
-        console.log('We should update the displayed day settings')
+        SettingsService.firstDaySelected(this.days[dayIndex].label)
       }
       let numberOfDaysSelected = this.calculateNumberOfDaysAlreadySelected()
       if (!numberOfDaysSelected) {
-        console.log('We should hide the displayed day settings')
+        SettingsService.noDaySelected()
       }
     },
     calculateNumberOfDaysAlreadySelected: function () {
@@ -89,6 +84,16 @@ export default {
         }
       }
       return numberOfDaysAlreadySelected
+    },
+    reset: function () {
+      if (this.targets) {
+        SettingsService.reset()
+      }
+    },
+    confirm: function () {
+      if (this.targets) {
+        SettingsService.save(this.days)
+      }
     }
   }
 }
@@ -157,5 +162,17 @@ export default {
 .button:hover {
   background-color: #aab1b9;
   color: #2c3e50;
+}
+
+.button.disabled {
+  border: 2px solid grey;
+  background-color: white;
+  color: grey;
+}
+
+.button.disabled:hover {
+  border: 2px solid grey;
+  background-color: white;
+  color: grey;
 }
 </style>
