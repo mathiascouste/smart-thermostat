@@ -8,23 +8,10 @@ import sys
 import requests
 import json
 
-import RPi.GPIO as GPIO
-
-GPIO.setmode(GPIO.BCM)
-GPIO.setwarnings(False)
-GPIO.setup(18,GPIO.OUT)
-
-
-web_loop_duration = 300
-main_loop_duration = 30
+web_loop_duration = 10
+main_loop_duration = 1
 
 days = {"0" : "SUN", "1" : "MON", "2" : "TUE", "3" : "WED", "4" : "THU", "5" : "FRI", "6" : "SAT"}
-
-base_dir = '/sys/bus/w1/devices/'
-device_folder = glob.glob(base_dir + '28*')[0]
-device_file = device_folder + '/w1_slave'
-
-firebase_url = 'https://smart-thermostat-2c65a.firebaseio.com/temperature.json'
 
 temp_buffer = []
 temp_buffer_index = 0
@@ -36,22 +23,10 @@ targets = None
 expected_temperature = 0
 
 print(" > Defining methods...")
-def read_temp_raw():
-  f = open(device_file, 'r')
-  lines = f.readlines()
-  f.close()
-  return lines
-
+# Mocked temperature reading
 def read_temp():
   global current_temperature
-  lines = read_temp_raw()
-  while lines[0].strip()[-3:] != 'YES' :
-    time.sleep(0.2)
-    lines = read_temp_raw()
-  equals_pos = lines[1].find('t=')
-  if equals_pos != -1:
-    temp_string = lines[1][equals_pos+2:]
-  current_temperature = float(temp_string) / 1000.0
+  current_temperature = 19.8
 
 def computeExpectedTemperature():
   global expected_temperature
@@ -74,10 +49,10 @@ def computeExpectedTemperature():
     expected_temperature = yA + coef * (current_time_in_minutes - xA)
 
 def on():
-  GPIO.output(18,GPIO.HIGH)
+  print(" -- ON -- ")
 
 def off():
-  GPIO.output(18,GPIO.LOW)
+  print(" -- OFF -- ")
 
 def checkTemperature():
   computeExpectedTemperature()
@@ -103,13 +78,13 @@ def calculateAverageTemperature():
 def sendToFirebase():
   date = time.strftime('%Y%m%d%H%M%S')
   data = {'date':date,'value':current_average_temperature}
-  result = requests.post(firebase_url, data=json.dumps(data))
+  print(json.dumps(data))
 
 def downloadTargets():
   global targets
   day = days.get(time.strftime('%w'))
   r = requests.get("https://smart-thermostat-2c65a.firebaseio.com/settings/-L3x0J_gL97IVtVl-zzg/" + day +".json")
-  targets = r.json
+  targets = r.json()
 
 def executeWebLoop():
   downloadTargets()
@@ -127,3 +102,4 @@ try:
     time.sleep(main_loop_duration)
 except KeyboardInterrupt:
   sys.exit(0)
+
