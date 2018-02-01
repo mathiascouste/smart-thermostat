@@ -7,9 +7,15 @@ import time
 import sys
 import requests
 import json
+import RPi.GPIO as GPIO
 
-web_loop_duration = 10
-main_loop_duration = 1
+GPIO.setmode(GPIO.BCM)
+GPIO.setwarnings(False)
+GPIO.setup(18,GPIO.OUT)
+
+
+web_loop_duration = 300
+main_loop_duration = 30
 
 days = {"0" : "SUN", "1" : "MON", "2" : "TUE", "3" : "WED", "4" : "THU", "5" : "FRI", "6" : "SAT"}
 
@@ -65,6 +71,7 @@ def computeExpectedTemperature():
     yB = float(closest_target_after['temperature'])
     coef = (yB - yA) / (xB - xA)
     expected_temperature = yA + coef * (current_time_in_minutes - xA)
+<<<<<<< HEAD
 
 def on():
   print(" -- ON -- ")
@@ -92,6 +99,35 @@ def calculateAverageTemperature():
     temp_buffer_index = 0
   current_average_temperature = sum(temp_buffer) / len(temp_buffer)
 
+=======
+
+def on():
+  GPIO.output(18,GPIO.HIGH)
+
+def off():
+  GPIO.output(18,GPIO.LOW)
+
+def checkTemperature():
+  computeExpectedTemperature()
+  if(current_temperature < expected_temperature):
+    on()
+  else:
+    off()
+
+def calculateAverageTemperature():
+  global temp_buffer_index
+  global current_average_temperature
+  if len(temp_buffer) <= temp_buffer_index:
+    temp_buffer.append(current_temperature)
+  else:
+    temp_buffer[temp_buffer_index] = current_temperature
+  
+  temp_buffer_index = temp_buffer_index + 1
+  if(temp_buffer_index >= buffer_len):
+    temp_buffer_index = 0
+  current_average_temperature = sum(temp_buffer) / len(temp_buffer)
+
+>>>>>>> d927b26cfd5d4b81843b0f8c92d3dea0b7134512
 # Mocked upload writing
 def sendToFirebase():
   date = time.strftime('%Y%m%d%H%M%S')
@@ -102,7 +138,11 @@ def downloadTargets():
   global targets
   day = days.get(time.strftime('%w'))
   r = requests.get("https://smart-thermostat-2c65a.firebaseio.com/settings/-L3x0J_gL97IVtVl-zzg/" + day +".json")
+<<<<<<< HEAD
   targets = r.json()
+=======
+  targets = r.json
+>>>>>>> d927b26cfd5d4b81843b0f8c92d3dea0b7134512
 
 def executeWebLoop():
   downloadTargets()
