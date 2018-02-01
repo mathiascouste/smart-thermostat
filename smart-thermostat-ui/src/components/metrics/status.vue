@@ -2,7 +2,8 @@
   <div class="status">
     <div class="roundedArea">
       <div class="content">
-        <div class="temperature">{{currentTemperature | truncateTemperature}}°C</div>
+        <div class="temperature" v-if="currentTemperature != null">{{currentTemperature | truncateTemperature}}°C</div>
+        <div class="no-temperature" v-else>Error</div>
         <div class="time">{{currentTime}}</div>
       </div>
     </div>
@@ -53,5 +54,11 @@ export default {
 
 .temperature {
   font-size: 5em;
+}
+
+.no-temperature {
+  font-size: 2em;
+  font-style: italic;
+  color: red;
 }
 </style>
