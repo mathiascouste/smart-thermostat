@@ -12,6 +12,7 @@
 
 <script>
 import MetricsService from '@/services/metrics'
+import functions from '@/components/functions'
 
 export default {
   name: 'status',
@@ -20,9 +21,7 @@ export default {
     currentTime: MetricsService.$currentTime
   },
   filters: {
-    truncateTemperature: (value) => {
-      return Math.trunc(value * 10) / 10
-    }
+    truncateTemperature: functions.truncateTemperature
   }
 }
 </script>
