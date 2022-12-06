@@ -20,7 +20,7 @@
     "apiai-promise": "^1.0.0",
     "body-parser": "1.17.2",
     "bole": "3.0.2",
-    "express": "4.15.2",
+    "express": "4.17.3",
     "firebase-admin": "^5.4.3",
     "moment": "^2.20.1",
     "node-fetch": "^1.7.1",
